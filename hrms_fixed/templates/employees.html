@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% set title = "Employees - HRMS" %}
+{% set page_title = "Employees" %}
+{% set active_page = "employees" %}
+
+{% block content %}
+  <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between mb-3">
+    <div>
+      <div class="h5 mb-0"><i class="bi bi-card-list me-1"></i> Employee Directory</div>
+      <div class="text-muted small">Search, view, and manage employees.</div>
+    </div>
+    <div class="d-flex gap-2">
+      <input id="empSearch" class="form-control" style="min-width:240px" placeholder="Search name / emp id / dept">
+      <a class="btn btn-primary" href="{{ url_for('add_employee') }}">
+        <i class="bi bi-person-plus-fill"></i> Add Employee
+      </a>
+    </div>
+  </div>
+
+  <div class="panel p-0 rounded-4 overflow-hidden">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0" id="empTable">
+        <thead class="table-light">
+          <tr>
+            <th>Emp ID</th>
+            <th>Photo</th>
+            <th>Name</th>
+            <th>Department</th>
+            <th>Job</th>
+            <th>Status</th>
+            <th class="text-end">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for emp in employees %}
+            <tr>
+              <td class="fw-semibold">{{ emp[1] }}</td>
+              <td>
+                {% if emp[16] %}
+                  <img src="/static/uploads/{{ emp[16] }}" style="width:42px;height:42px;border-radius:50%;object-fit:cover;">
+                {% else %}
+                  <img src="https://via.placeholder.com/42" style="width:42px;height:42px;border-radius:50%;object-fit:cover;">
+                {% endif %}
+              </td>
+              <td>
+                <div class="fw-semibold">{{ emp[2] }}</div>
+                <div class="text-muted small">{{ emp[11] }}</div>
+              </td>
+              <td>{{ emp[6] }}</td>
+              <td>{{ emp[5] }}</td>
+              <td>
+                {% if emp[14] == 'Active' %}
+                  <span class="badge text-bg-success">Active</span>
+                {% else %}
+                  <span class="badge text-bg-secondary">{{ emp[14] }}</span>
+                {% endif %}
+              </td>
+              <td class="text-end">
+                <a href="/employee/{{ emp[0] }}" class="btn btn-sm btn-outline-primary">
+                  <i class="bi bi-eye"></i>
+                </a>
+                <a href="/delete/{{ emp[0] }}" class="btn btn-sm btn-outline-danger"
+                   onclick="return confirm('Are you sure you want to delete this employee?')">
+                  <i class="bi bi-trash"></i>
+                </a>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="7" class="text-center text-muted py-4">No employees found.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const input = document.getElementById('empSearch');
+  const table = document.getElementById('empTable');
+  if (input && table && table.tBodies.length) {
+    input.addEventListener('input', () => {
+      const q = (input.value || '').toLowerCase();
+      for (const row of table.tBodies[0].rows) {
+        const txt = row.innerText.toLowerCase();
+        row.style.display = txt.includes(q) ? '' : 'none';
+      }
+    });
+  }
+</script>
+{% endblock %}

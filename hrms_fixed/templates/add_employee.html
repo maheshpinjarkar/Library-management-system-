@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% set title = "Add Employee - HRMS" %}
+{% set page_title = "Add Employee" %}
+{% set active_page = "add_employee" %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-3">
+    <div>
+        <div class="h5 mb-0"><i class="bi bi-person-plus-fill me-1"></i> Add New Employee</div>
+        <div class="text-muted small">Fill details and save employee profile.</div>
+    </div>
+    <a class="btn btn-outline-secondary" href="{{ url_for('employees') }}"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+
+<form method="POST" enctype="multipart/form-data" class="pb-4">
+
+<!-- PROFILE -->
+<div class="panel p-4 rounded-4 text-center mb-3">
+    <div class="fw-semibold mb-2"><i class="bi bi-image"></i> Profile Photo</div>
+
+    <div class="border border-2 border-dashed rounded-4 p-4" style="cursor:pointer" onclick="document.getElementById('file').click()">
+        <i class="bi bi-upload fs-3"></i>
+        <p>Click to Upload</p>
+        <input type="file" id="file" name="profile" hidden onchange="previewImage(event)">
+        <img id="preview" class="mt-2" style="width:84px;height:84px;border-radius:50%;object-fit:cover;display:none;" src="">
+    </div>
+</div>
+
+<!-- PERSONAL -->
+<div class="panel p-4 rounded-4 mb-3">
+    <div class="fw-semibold mb-3"><i class="bi bi-person"></i> Personal Info</div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <label>Employee ID</label>
+            <input name="emp_id" class="form-control">
+        </div>
+
+        <div class="col-md-4">
+            <label>Full Name</label>
+            <input name="name" class="form-control">
+        </div>
+
+        <div class="col-md-4">
+            <label>DOB</label>
+            <input type="date" name="dob" class="form-control">
+        </div>
+
+        <div class="col-md-4 mt-3">
+            <label>Gender</label>
+            <select name="gender" class="form-select">
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<!-- JOB -->
+<div class="panel p-4 rounded-4 mb-3">
+    <div class="fw-semibold mb-3"><i class="bi bi-briefcase"></i> Job Info</div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <label>Job Title</label>
+            <input name="job_title" class="form-control">
+        </div>
+
+        <div class="col-md-4">
+            <label>Department</label>
+            <select name="department" class="form-select">
+                <option>HR</option>
+                <option>Developer</option>
+                <option>Sales</option>
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label>Joining Date</label>
+            <input type="date" name="joining_date" class="form-control">
+        </div>
+
+        <div class="col-md-4 mt-3">
+            <label>Employment Type</label>
+            <select name="employment_type" class="form-select">
+                <option>Full-Time</option>
+                <option>Intern</option>
+                <option>Contract</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<!-- CONTACT -->
+<div class="panel p-4 rounded-4 mb-3">
+    <div class="fw-semibold mb-3"><i class="bi bi-telephone"></i> Contact</div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <label>Email</label>
+            <input name="email" class="form-control">
+        </div>
+
+        <div class="col-md-4">
+            <label>Phone</label>
+            <input name="phone" class="form-control">
+        </div>
+
+        <div class="col-md-4">
+            <label>Emergency</label>
+            <input name="emergency" class="form-control">
+        </div>
+    </div>
+</div>
+
+<!-- OTHER -->
+<div class="panel p-4 rounded-4 mb-3">
+    <div class="fw-semibold mb-3"><i class="bi bi-gear"></i> Other</div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <label>Manager</label>
+            <input name="manager" class="form-control">
+        </div>
+
+        <div class="col-md-4">
+            <label>Location</label>
+            <input name="location" class="form-control">
+        </div>
+
+        <div class="col-md-4">
+            <label>Status</label>
+            <select name="status" class="form-select">
+                <option>Active</option>
+                <option>Inactive</option>
+            </select>
+        </div>
+
+        <div class="col-md-4 mt-3">
+            <label>KYC</label>
+            <input name="kyc" class="form-control">
+        </div>
+    </div>
+</div>
+
+<button class="btn btn-primary w-100 py-2 rounded-4">
+    <i class="bi bi-save"></i> Save Employee
+</button>
+
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function previewImage(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(){
+    const img = document.getElementById('preview');
+    img.src = reader.result;
+    img.style.display = 'inline-block';
+  }
+  reader.readAsDataURL(file);
+}
+</script>
+{% endblock %}

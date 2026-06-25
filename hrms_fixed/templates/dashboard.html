@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% set title = "Dashboard - HRMS" %}
+{% set page_title = "Dashboard" %}
+{% set active_page = "dashboard" %}
+
+{% block head_extra %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+
+  <div class="row g-3">
+    <div class="col-md-3">
+      <div class="card card-pro text-white border-0" style="background:linear-gradient(135deg,#3b82f6,#6366f1);">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div>
+            <div class="opacity-75 small">Employees</div>
+            <div class="h3 mb-0">{{ total_emp }}</div>
+          </div>
+          <i class="bi bi-people-fill fs-2"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card card-pro text-white border-0" style="background:linear-gradient(135deg,#22c55e,#16a34a);">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div>
+            <div class="opacity-75 small">Departments</div>
+            <div class="h3 mb-0">{{ total_dept }}</div>
+          </div>
+          <i class="bi bi-diagram-3-fill fs-2"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card card-pro text-white border-0" style="background:linear-gradient(135deg,#f59e0b,#f97316);">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div>
+            <div class="opacity-75 small">Total Salary</div>
+            <div class="h3 mb-0">₹{{ total_salary }}</div>
+          </div>
+          <i class="bi bi-cash-stack fs-2"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card card-pro text-white border-0" style="background:linear-gradient(135deg,#ef4444,#dc2626);">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div>
+            <div class="opacity-75 small">Attendance</div>
+            <div class="h3 mb-0">{{ present + absent + leave }}</div>
+          </div>
+          <i class="bi bi-calendar-check-fill fs-2"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 mt-1">
+    <div class="col-md-3">
+      <div class="panel p-3 rounded-4">
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <i class="bi bi-person-check-fill text-success"></i>
+          <div class="fw-semibold">Active Employees</div>
+        </div>
+        <div class="h3 mb-0">{{ active_emp }}</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="panel p-3 rounded-4">
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <i class="bi bi-person-x-fill text-danger"></i>
+          <div class="fw-semibold">Absent Today</div>
+        </div>
+        <div class="h3 mb-0">{{ absent_today }}</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="panel p-3 rounded-4">
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <i class="bi bi-calendar-minus-fill text-warning"></i>
+          <div class="fw-semibold">On Leave</div>
+        </div>
+        <div class="h3 mb-0">{{ on_leave }}</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="panel p-3 rounded-4">
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <i class="bi bi-person-plus-fill text-primary"></i>
+          <div class="fw-semibold">New Joiners (30d)</div>
+        </div>
+        <div class="h3 mb-0">{{ new_join }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 mt-1">
+    <div class="col-md-4">
+      <div class="panel p-3 rounded-4">
+        <div class="fw-semibold mb-2"><i class="bi bi-pie-chart-fill me-1"></i> Attendance</div>
+        <div class="chart-wrap"><canvas id="c1"></canvas></div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="panel p-3 rounded-4">
+        <div class="fw-semibold mb-2"><i class="bi bi-bar-chart-fill me-1"></i> Departments</div>
+        <div class="chart-wrap"><canvas id="c2"></canvas></div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="panel p-3 rounded-4">
+        <div class="fw-semibold mb-2"><i class="bi bi-graph-up me-1"></i> Attendance Trend (7 days)</div>
+        <div class="chart-wrap"><canvas id="c3"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 mt-1">
+    <div class="col-md-4">
+      <div class="panel p-3 rounded-4">
+        <div class="fw-semibold mb-2"><i class="bi bi-cash me-1"></i> Top Salary</div>
+        <div class="chart-wrap"><canvas id="c4"></canvas></div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="panel p-3 rounded-4">
+        <div class="fw-semibold mb-2"><i class="bi bi-gender-ambiguous me-1"></i> Gender</div>
+        <div class="chart-wrap"><canvas id="c5"></canvas></div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="panel p-3 rounded-4">
+        <div class="fw-semibold mb-2"><i class="bi bi-calendar-event me-1"></i> Hiring Trend</div>
+        <div class="chart-wrap"><canvas id="c6"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const c1 = document.getElementById('c1');
+  const c2 = document.getElementById('c2');
+  const c3 = document.getElementById('c3');
+  const c4 = document.getElementById('c4');
+  const c5 = document.getElementById('c5');
+  const c6 = document.getElementById('c6');
+
+  const commonOptions = { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:true } } };
+
+  new Chart(c1,{
+    type:'doughnut',
+    data:{labels:["Present","Absent","Leave"],
+    datasets:[{data:[{{present}},{{absent}},{{leave}}],
+    backgroundColor:["#22c55e","#ef4444","#3b82f6"]}]}
+  , options: commonOptions});
+
+  let deptLabels={{dept_data|map(attribute=0)|list|tojson}};
+  let deptValues={{dept_data|map(attribute=1)|list|tojson}};
+  new Chart(c2,{type:'bar',data:{labels:deptLabels,datasets:[{data:deptValues, backgroundColor:'#8b5cf6'}]}, options: commonOptions});
+
+  let perfLabels={{ perf_labels|tojson }};
+  let perfValues={{ perf_values|tojson }};
+  new Chart(c3,{type:'line',data:{labels:perfLabels,datasets:[{label:'Present', data:perfValues, borderColor:'#7c3aed'}]}, options: commonOptions});
+
+  let sal_l={{top_salary|map(attribute=0)|list|tojson}};
+  let sal_v={{top_salary|map(attribute=1)|list|tojson}};
+  new Chart(c4,{type:'bar',data:{labels:sal_l,datasets:[{data:sal_v, backgroundColor:'#22c55e'}]}, options: commonOptions});
+
+  let gen_l={{gender_data|map(attribute=0)|list|tojson}};
+  let gen_v={{gender_data|map(attribute=1)|list|tojson}};
+  new Chart(c5,{type:'pie',data:{labels:gen_l,datasets:[{data:gen_v, backgroundColor:["#7c3aed","#3b82f6","#22c55e","#f59e0b","#ef4444"]}]}, options: commonOptions});
+
+  let hire_l={{hiring_data|map(attribute=0)|list|tojson}};
+  let hire_v={{hiring_data|map(attribute=1)|list|tojson}};
+  new Chart(c6,{type:'line',data:{labels:hire_l,datasets:[{data:hire_v, borderColor:'#3b82f6'}]}, options: commonOptions});
+</script>
+{% endblock %}

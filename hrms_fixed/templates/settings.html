@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% set title = "Settings - HRMS" %}
+{% set page_title = "Settings" %}
+{% set active_page = "settings" %}
+
+{% block content %}
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <div>
+      <div class="h5 mb-0"><i class="bi bi-gear-fill me-1"></i> Settings</div>
+      <div class="text-muted small">Update your profile, password and theme.</div>
+    </div>
+  </div>
+
+  {% if message %}
+    <div class="alert alert-success">{{ message }}</div>
+  {% endif %}
+  {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+  {% endif %}
+
+  <form method="POST" class="pb-4">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <div class="panel p-4 rounded-4">
+          <div class="fw-semibold mb-3"><i class="bi bi-person me-1"></i> Profile</div>
+          <input name="name" class="form-control mb-2" placeholder="Full Name">
+          <input name="email" class="form-control" placeholder="Email">
+          <div class="text-muted small mt-2">Optional: profile fields are stored for admin user.</div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="panel p-4 rounded-4">
+          <div class="fw-semibold mb-3"><i class="bi bi-shield-lock me-1"></i> Security</div>
+          <input name="password" type="password" class="form-control mb-2" placeholder="New Password">
+          <input name="confirm_password" type="password" class="form-control" placeholder="Confirm Password">
+          <div class="text-muted small mt-2">Leave blank if you don't want to change password.</div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="panel p-4 rounded-4">
+          <div class="fw-semibold mb-3"><i class="bi bi-palette me-1"></i> Appearance</div>
+          <select name="theme" class="form-select">
+            <option {% if (theme or '')=='Light' %}selected{% endif %}>Light</option>
+            <option {% if (theme or '')=='Dark' %}selected{% endif %}>Dark</option>
+            <option {% if (theme or '')=='Purple' %}selected{% endif %}>Purple</option>
+          </select>
+          <div class="text-muted small mt-2">Theme is applied instantly after save.</div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="panel p-4 rounded-4">
+          <div class="fw-semibold mb-3"><i class="bi bi-cloud-upload me-1"></i> Backup</div>
+          <button type="button" class="btn btn-outline-secondary w-100" disabled>
+            Backup Data (demo)
+          </button>
+          <div class="text-muted small mt-2">This button is demo-only; no export route is wired yet.</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary mt-3 w-100 py-2 rounded-4">
+      <i class="bi bi-save"></i> Save Settings
+    </button>
+  </form>
+{% endblock %}

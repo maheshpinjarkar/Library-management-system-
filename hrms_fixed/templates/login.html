@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Login</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+body {
+    background: linear-gradient(135deg,#7c3aed,#5b21b6);
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-family:'Segoe UI';
+}
+
+.login-box {
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    width:350px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+.input-group-text {
+    background:#7c3aed;
+    color:white;
+    border:none;
+}
+
+.btn-primary {
+    background:#7c3aed;
+    border:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="login-box">
+
+<h4 class="text-center mb-3"><i class="bi bi-shield-lock"></i> Admin Login</h4>
+
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+<form method="POST">
+
+<div class="input-group mb-3">
+<span class="input-group-text"><i class="bi bi-person"></i></span>
+<input name="username" class="form-control" placeholder="Username">
+</div>
+
+<div class="input-group mb-3">
+<span class="input-group-text"><i class="bi bi-lock"></i></span>
+<input name="password" type="password" class="form-control" placeholder="Password">
+</div>
+
+<button class="btn btn-primary w-100">
+<i class="bi bi-box-arrow-in-right"></i> Login
+</button>
+
+</form>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% set title = "Add Notification - HRMS" %}
+{% set page_title = "Add Notification" %}
+{% set active_page = "notifications" %}
+
+{% block content %}
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <div>
+      <div class="h5 mb-0"><i class="bi bi-plus-circle me-1"></i> Add Notification</div>
+      <div class="text-muted small">Create an announcement for HRMS dashboard.</div>
+    </div>
+    <a class="btn btn-outline-secondary" href="{{ url_for('notifications') }}">
+      <i class="bi bi-arrow-left"></i> Back
+    </a>
+  </div>
+
+  <div class="panel p-4 rounded-4" style="max-width:900px">
+    {% if error %}
+      <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST">
+      <div class="mb-3">
+        <label class="form-label">Title</label>
+        <input name="title" class="form-control" placeholder="e.g. Salary credited" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Message</label>
+        <textarea name="message" class="form-control" rows="4" placeholder="Write notification message..." required></textarea>
+      </div>
+
+      <div class="d-flex gap-2">
+        <button class="btn btn-primary">
+          <i class="bi bi-send"></i> Publish
+        </button>
+        <a href="{{ url_for('notifications') }}" class="btn btn-outline-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

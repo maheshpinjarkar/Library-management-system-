@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% set title = "Reports - HRMS" %}
+{% set page_title = "Reports" %}
+{% set active_page = "reports" %}
+
+{% block head_extra %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+  <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between mb-3">
+    <div>
+      <div class="h5 mb-0"><i class="bi bi-file-earmark-bar-graph me-1"></i> Reports</div>
+      <div class="text-muted small">Real stats and trends from your HRMS data.</div>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-3">
+    <div class="col-md-4">
+      <div class="panel p-3 rounded-4 text-white" style="background:#6366f1;border:none;">
+        <div class="opacity-75 small">Employees</div>
+        <div class="h3 mb-0">{{ total_emp }}</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="panel p-3 rounded-4 text-white" style="background:#22c55e;border:none;">
+        <div class="opacity-75 small">Total Salary</div>
+        <div class="h3 mb-0">₹{{ total_salary }}</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="panel p-3 rounded-4 text-white" style="background:#f59e0b;border:none;">
+        <div class="opacity-75 small">Attendance Records</div>
+        <div class="h3 mb-0">{{ total_att }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-3">
+    <div class="col-md-8">
+      <div class="panel p-4 rounded-4">
+        <div class="fw-semibold mb-2">Monthly Payroll Trend</div>
+        <div class="chart-wrap">
+          <canvas id="monthlyPay"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="panel p-4 rounded-4">
+        <div class="fw-semibold mb-2">Attendance Split</div>
+        <div class="chart-wrap">
+          <canvas id="attSplit"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel p-4 rounded-4">
+    <div class="fw-semibold mb-2">Recent Payroll</div>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Emp ID</th>
+            <th>Name</th>
+            <th class="text-end">Total</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in payroll_data %}
+            <tr>
+              <td class="fw-semibold">{{ row[1] }}</td>
+              <td>{{ row[2] }}</td>
+              <td class="text-end fw-semibold">₹{{ row[6] }}</td>
+              <td class="text-muted">{{ row[7] }}</td>
+            </tr>
+          {% else %}
+            <tr><td colspan="4" class="text-center text-muted py-4">No payroll data.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const commonOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: true } }
+  };
+
+  const monLabels = {{ monthly_pay|map(attribute=0)|list|tojson }};
+  const monValues = {{ monthly_pay|map(attribute=1)|list|tojson }};
+  new Chart(document.getElementById('monthlyPay'), {
+    type: 'line',
+    data: { labels: monLabels, datasets: [{ label: 'Total Payout', data: monValues, borderColor: '#7c3aed', backgroundColor: 'rgba(124,58,237,.15)' }] },
+    options: commonOptions
+  });
+
+  const attLabels = {{ att_split|map(attribute=0)|list|tojson }};
+  const attValues = {{ att_split|map(attribute=1)|list|tojson }};
+  new Chart(document.getElementById('attSplit'), {
+    type: 'doughnut',
+    data: { labels: attLabels, datasets: [{ data: attValues, backgroundColor: ['#22c55e','#ef4444','#3b82f6','#f59e0b','#7c3aed'] }] },
+    options: commonOptions
+  });
+</script>
+{% endblock %}

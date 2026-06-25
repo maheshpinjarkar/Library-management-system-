@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ title or "HRMS" }}</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/app.css') }}" rel="stylesheet">
+
+  {% block head_extra %}{% endblock %}
+</head>
+<body class="theme-{{ (theme or 'purple')|lower }}">
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon"><i class="bi bi-buildings"></i></div>
+        <div class="brand-text">
+          <div class="brand-title">HRMS</div>
+          <div class="brand-subtitle">Admin Panel</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a class="nav-link {% if active_page=='dashboard' %}active{% endif %}" href="{{ url_for('dashboard') }}">
+          <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+        <a class="nav-link {% if active_page=='employees' %}active{% endif %}" href="{{ url_for('employees') }}">
+          <i class="bi bi-people-fill"></i> Employees
+        </a>
+        <a class="nav-link {% if active_page=='add_employee' %}active{% endif %}" href="{{ url_for('add_employee') }}">
+          <i class="bi bi-person-plus-fill"></i> Add Employee
+        </a>
+        <a class="nav-link {% if active_page=='attendance' %}active{% endif %}" href="{{ url_for('attendance') }}">
+          <i class="bi bi-calendar-check-fill"></i> Attendance
+        </a>
+        <a class="nav-link {% if active_page=='payroll' %}active{% endif %}" href="{{ url_for('payroll') }}">
+          <i class="bi bi-cash-stack"></i> Payroll
+        </a>
+        <a class="nav-link {% if active_page=='reports' %}active{% endif %}" href="{{ url_for('reports') }}">
+          <i class="bi bi-file-earmark-bar-graph"></i> Reports
+        </a>
+        <a class="nav-link {% if active_page=='analytics' %}active{% endif %}" href="{{ url_for('analytics') }}">
+          <i class="bi bi-graph-up-arrow"></i> Analytics
+        </a>
+        <a class="nav-link {% if active_page=='notifications' %}active{% endif %}" href="{{ url_for('notifications') }}">
+          <i class="bi bi-bell-fill"></i> Notifications
+          {% if notif_count and notif_count > 0 %}
+            <span class="pill">{{ notif_count }}</span>
+          {% endif %}
+        </a>
+        <a class="nav-link {% if active_page=='settings' %}active{% endif %}" href="{{ url_for('settings') }}">
+          <i class="bi bi-gear-fill"></i> Settings
+        </a>
+
+        <div class="nav-divider"></div>
+        <a class="nav-link" href="{{ url_for('logout') }}">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+      </nav>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <button class="btn btn-sm btn-outline-secondary d-md-none" id="sidebarToggle">
+          <i class="bi bi-list"></i>
+        </button>
+
+        <div class="topbar-title">
+          {% if page_title %}{{ page_title }}{% else %}HRMS{% endif %}
+        </div>
+
+        <div class="topbar-actions">
+          <a class="icon-btn" href="{{ url_for('notifications') }}" title="Notifications">
+            <i class="bi bi-bell"></i>
+            {% if notif_count and notif_count > 0 %}
+              <span class="badge-dot"></span>
+            {% endif %}
+          </a>
+          <a class="icon-btn" href="{{ url_for('settings') }}" title="Profile / Settings">
+            <i class="bi bi-person-circle"></i>
+          </a>
+        </div>
+      </header>
+
+      <main class="content">
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const btn = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebar');
+    if (btn && sidebar) {
+      btn.addEventListener('click', () => sidebar.classList.toggle('open'));
+    }
+  </script>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>
+

@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% set title = "Employee Profile - HRMS" %}
+{% set page_title = "Employee Profile" %}
+{% set active_page = "employees" %}
+
+{% block content %}
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <div>
+      <div class="h5 mb-0"><i class="bi bi-person-badge me-1"></i> Employee Profile</div>
+      <div class="text-muted small">View employee details, attendance and payroll.</div>
+    </div>
+    <a class="btn btn-outline-secondary" href="{{ url_for('employees') }}">
+      <i class="bi bi-arrow-left"></i> Back
+    </a>
+  </div>
+
+  {% if not emp %}
+    <div class="alert alert-danger">Employee not found.</div>
+  {% else %}
+    <div class="panel p-4 rounded-4 mb-3">
+      <div class="d-flex gap-3 align-items-center">
+        {% if emp[16] %}
+          <img src="/static/uploads/{{ emp[16] }}" alt="profile" style="width:84px;height:84px;border-radius:50%;object-fit:cover;border:3px solid var(--primary);">
+        {% else %}
+          <img src="https://via.placeholder.com/84" alt="profile" style="width:84px;height:84px;border-radius:50%;object-fit:cover;border:3px solid var(--primary);">
+        {% endif %}
+
+        <div class="flex-grow-1">
+          <div class="h5 mb-1">{{ emp[2] }}</div>
+          <div class="text-muted">{{ emp[5] }} • {{ emp[6] }}</div>
+          <div class="small text-muted">Emp ID: <span class="fw-semibold">{{ emp[1] }}</span> • Status: <span class="fw-semibold">{{ emp[14] }}</span></div>
+        </div>
+
+        <a href="/delete/{{ emp[0] }}" class="btn btn-outline-danger"
+           onclick="return confirm('Are you sure you want to delete this employee?')">
+          <i class="bi bi-trash"></i> Delete
+        </a>
+      </div>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-md-6">
+        <div class="panel p-4 rounded-4">
+          <div class="fw-semibold mb-3"><i class="bi bi-info-circle me-1"></i> Basic Details</div>
+          <div class="row g-3">
+            <div class="col-6"><div class="text-muted small">DOB</div><div class="fw-semibold">{{ emp[3] }}</div></div>
+            <div class="col-6"><div class="text-muted small">Gender</div><div class="fw-semibold">{{ emp[4] }}</div></div>
+            <div class="col-6"><div class="text-muted small">Joining Date</div><div class="fw-semibold">{{ emp[7] }}</div></div>
+            <div class="col-6"><div class="text-muted small">Employment</div><div class="fw-semibold">{{ emp[8] }}</div></div>
+            <div class="col-6"><div class="text-muted small">Manager</div><div class="fw-semibold">{{ emp[9] }}</div></div>
+            <div class="col-6"><div class="text-muted small">Location</div><div class="fw-semibold">{{ emp[10] }}</div></div>
+            <div class="col-12"><div class="text-muted small">KYC</div><div class="fw-semibold">{{ emp[15] }}</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="panel p-4 rounded-4">
+          <div class="fw-semibold mb-3"><i class="bi bi-telephone me-1"></i> Contact</div>
+          <div class="row g-3">
+            <div class="col-12"><div class="text-muted small">Email</div><div class="fw-semibold">{{ emp[11] }}</div></div>
+            <div class="col-6"><div class="text-muted small">Phone</div><div class="fw-semibold">{{ emp[12] }}</div></div>
+            <div class="col-6"><div class="text-muted small">Emergency</div><div class="fw-semibold">{{ emp[13] }}</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-3 mt-0">
+      <div class="col-md-6">
+        <div class="panel p-4 rounded-4">
+          <div class="fw-semibold mb-2"><i class="bi bi-calendar-check me-1"></i> Recent Attendance</div>
+          <div class="table-responsive">
+            <table class="table table-sm align-middle mb-0">
+              <thead class="table-light"><tr><th>Date</th><th>Status</th></tr></thead>
+              <tbody>
+                {% for row in attendance %}
+                  <tr><td>{{ row[3] }}</td><td>{{ row[4] }}</td></tr>
+                {% else %}
+                  <tr><td colspan="2" class="text-muted">No attendance records.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="panel p-4 rounded-4">
+          <div class="fw-semibold mb-2"><i class="bi bi-cash-stack me-1"></i> Recent Payroll</div>
+          <div class="table-responsive">
+            <table class="table table-sm align-middle mb-0">
+              <thead class="table-light"><tr><th>Date</th><th class="text-end">Total</th></tr></thead>
+              <tbody>
+                {% for row in payroll %}
+                  <tr><td>{{ row[7] }}</td><td class="text-end">₹{{ row[6] }}</td></tr>
+                {% else %}
+                  <tr><td colspan="2" class="text-muted">No payroll records.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}

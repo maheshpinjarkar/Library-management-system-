@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% set title = "Analytics - HRMS" %}
+{% set page_title = "Analytics" %}
+{% set active_page = "analytics" %}
+
+{% block head_extra %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+  <div class="row g-3 mb-1">
+    <div class="col-md-4">
+      <div class="panel p-3 rounded-4 text-white" style="background:#6366f1;border:none;">
+        <div class="opacity-75 small">Employees</div>
+        <div class="h3 mb-0">{{ total_emp }}</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="panel p-3 rounded-4 text-white" style="background:#22c55e;border:none;">
+        <div class="opacity-75 small">Total Salary</div>
+        <div class="h3 mb-0">₹{{ total_salary }}</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="panel p-3 rounded-4 text-white" style="background:#f59e0b;border:none;">
+        <div class="opacity-75 small">Attendance Records</div>
+        <div class="h3 mb-0">{{ total_att }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-md-3">
+      <div class="panel p-3 rounded-4">
+        <div class="fw-semibold mb-2">Dept</div>
+        <div class="chart-wrap"><canvas id="dept"></canvas></div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="panel p-3 rounded-4">
+        <div class="fw-semibold mb-2">Gender</div>
+        <div class="chart-wrap"><canvas id="gender"></canvas></div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="panel p-3 rounded-4">
+        <div class="fw-semibold mb-2">Attendance</div>
+        <div class="chart-wrap"><canvas id="att"></canvas></div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="panel p-3 rounded-4">
+        <div class="fw-semibold mb-2">Salary</div>
+        <div class="chart-wrap"><canvas id="salary"></canvas></div>
+      </div>
+    </div>
+    <div class="col-md-12">
+      <div class="panel p-3 rounded-4">
+        <div class="fw-semibold mb-2">Monthly</div>
+        <div class="chart-wrap"><canvas id="monthly"></canvas></div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+
+// DATA
+let dept_labels = {{ dept_data|map(attribute=0)|list|tojson }};
+let dept_values = {{ dept_data|map(attribute=1)|list|tojson }};
+
+let gender_labels = {{ gender_data|map(attribute=0)|list|tojson }};
+let gender_values = {{ gender_data|map(attribute=1)|list|tojson }};
+
+let att_labels = {{ att_status|map(attribute=0)|list|tojson }};
+let att_values = {{ att_status|map(attribute=1)|list|tojson }};
+
+let sal_labels = {{ top_salary|map(attribute=0)|list|tojson }};
+let sal_values = {{ top_salary|map(attribute=1)|list|tojson }};
+
+let mon_labels = {{ monthly|map(attribute=0)|list|tojson }};
+let mon_values = {{ monthly|map(attribute=1)|list|tojson }};
+
+// COMMON CHART OPTIONS
+let options = { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:true } } };
+
+// CHARTS
+new Chart(document.getElementById("dept"), {
+    type:'pie',
+    data:{ labels:dept_labels, datasets:[{ data:dept_values }] },
+    options:options
+});
+
+new Chart(document.getElementById("gender"), {
+    type:'doughnut',
+    data:{ labels:gender_labels, datasets:[{ data:gender_values }] },
+    options:options
+});
+
+new Chart(document.getElementById("att"), {
+    type:'bar',
+    data:{ labels:att_labels, datasets:[{ data:att_values }] },
+    options:options
+});
+
+new Chart(document.getElementById("salary"), {
+    type:'bar',
+    data:{ labels:sal_labels, datasets:[{ data:sal_values }] },
+    options:options
+});
+
+new Chart(document.getElementById("monthly"), {
+    type:'line',
+    data:{ labels:mon_labels, datasets:[{ data:mon_values }] },
+    options:options
+});
+
+</script>
+{% endblock %}

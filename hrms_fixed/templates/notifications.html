@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% set title = "Notifications - HRMS" %}
+{% set page_title = "Notifications" %}
+{% set active_page = "notifications" %}
+
+{% block content %}
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <div>
+      <div class="h5 mb-0"><i class="bi bi-bell me-1"></i> Notifications</div>
+      <div class="text-muted small">Announcements and alerts.</div>
+    </div>
+    <a href="{{ url_for('add_notification') }}" class="btn btn-primary">
+      <i class="bi bi-plus"></i> Add Notification
+    </a>
+  </div>
+
+  <div class="row g-3">
+    {% for n in data %}
+      <div class="col-12">
+        <div class="panel p-4 rounded-4 {% if n[3]=='unread' %}border-start border-4 border-primary{% endif %}">
+          <div class="d-flex align-items-start justify-content-between gap-2">
+            <div>
+              <div class="fw-semibold">{{ n[1] }}</div>
+              <div class="text-muted mt-1">{{ n[2] }}</div>
+              <div class="text-muted small mt-2"><i class="bi bi-clock"></i> {{ n[4] }}</div>
+            </div>
+            <div class="text-end">
+              {% if n[3]=='unread' %}
+                <a href="/read/{{ n[0] }}" class="btn btn-sm btn-outline-success">
+                  <i class="bi bi-check2"></i> Mark read
+                </a>
+              {% else %}
+                <span class="badge text-bg-secondary">Read</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <div class="col-12">
+        <div class="panel p-4 rounded-4 text-center text-muted">No notifications yet.</div>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

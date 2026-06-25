@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+{% set title = "Payroll - HRMS" %}
+{% set page_title = "Payroll" %}
+{% set active_page = "payroll" %}
+
+{% block content %}
+  <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between mb-3">
+    <div>
+      <div class="h5 mb-0"><i class="bi bi-cash-stack me-1"></i> Payroll</div>
+      <div class="text-muted small">Employee salary calculations and history.</div>
+    </div>
+  </div>
+
+  {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+  {% endif %}
+
+  <div class="row g-3 mb-3">
+    <div class="col-md-6">
+      <div class="panel p-3 rounded-4 text-white" style="background:#6366f1;border:none;">
+        <div class="opacity-75 small">Total Records</div>
+        <div class="h3 mb-0">{{ total_records }}</div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="panel p-3 rounded-4 text-white" style="background:#22c55e;border:none;">
+        <div class="opacity-75 small">Total Payout</div>
+        <div class="h3 mb-0">₹{{ total_payout }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel p-4 rounded-4 mb-3">
+    <div class="fw-semibold mb-2"><i class="bi bi-calculator me-1"></i> Calculate Payroll</div>
+    <form method="POST" id="payForm">
+      <div class="row g-2">
+        <div class="col-md-4">
+          <label class="form-label small text-muted">Employee</label>
+          <select id="empSelect" class="form-select">
+            <option value="">Select employee</option>
+            {% for e in employees %}
+              <option value="{{ e[0] }}" data-name="{{ e[1] }}">{{ e[0] }} - {{ e[1] }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label small text-muted">Emp ID</label>
+          <input id="emp_id" name="emp_id" class="form-control" placeholder="E001" required>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label small text-muted">Name</label>
+          <input id="name" name="name" class="form-control" placeholder="Employee Name" required>
+        </div>
+
+        <div class="col-md-3"></div>
+
+        <div class="col-md-3">
+          <label class="form-label small text-muted">Basic</label>
+          <input id="basic" name="basic" type="number" step="0.01" min="0" class="form-control" placeholder="0" required>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label small text-muted">Bonus</label>
+          <input id="bonus" name="bonus" type="number" step="0.01" min="0" class="form-control" placeholder="0">
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label small text-muted">Deduction</label>
+          <input id="deduction" name="deduction" type="number" step="0.01" min="0" class="form-control" placeholder="0">
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label small text-muted">Total (auto)</label>
+          <input id="total" class="form-control" value="0" readonly>
+        </div>
+
+        <div class="col-md-12">
+          <button class="btn btn-primary w-100 py-2 rounded-4">
+            <i class="bi bi-save2"></i> Save Payroll Entry
+          </button>
+          <div class="text-muted small mt-2">
+            Note: Blank submit ab insert nahi hoga. Basic required hai, aur total live calculate hota hai.
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="d-flex gap-2 align-items-center mb-2">
+    <input type="text" id="search" class="form-control" placeholder="Search employee / amount / date">
+  </div>
+
+  <div class="panel p-0 rounded-4 overflow-hidden">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0" id="table">
+        <thead class="table-light">
+          <tr>
+            <th>Emp ID</th>
+            <th>Name</th>
+            <th class="text-end">Basic</th>
+            <th class="text-end">Bonus</th>
+            <th class="text-end">Deduction</th>
+            <th class="text-end">Total</th>
+            <th>Date</th>
+            <th class="text-end">Slip</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in data %}
+            <tr>
+              <td class="fw-semibold">{{ row[1] }}</td>
+              <td>{{ row[2] }}</td>
+              <td class="text-end">₹{{ row[3] }}</td>
+              <td class="text-end">₹{{ row[4] }}</td>
+              <td class="text-end">₹{{ row[5] }}</td>
+              <td class="text-end fw-semibold">₹{{ row[6] }}</td>
+              <td class="text-muted">{{ row[7] }}</td>
+              <td class="text-end">
+                <button type="button" class="btn btn-sm btn-outline-success"
+                        onclick="printSlip('{{ row[1] }}','{{ row[2] }}','{{ row[3] }}','{{ row[4] }}','{{ row[5] }}','{{ row[6] }}','{{ row[7] }}')">
+                  <i class="bi bi-printer"></i>
+                </button>
+              </td>
+            </tr>
+          {% else %}
+            <tr><td colspan="8" class="text-center text-muted py-4">No payroll records.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const empSelect = document.getElementById('empSelect');
+  const empId = document.getElementById('emp_id');
+  const name = document.getElementById('name');
+  const basic = document.getElementById('basic');
+  const bonus = document.getElementById('bonus');
+  const deduction = document.getElementById('deduction');
+  const total = document.getElementById('total');
+
+  function num(v){ return parseFloat(v || '0') || 0; }
+  function calc(){
+    const t = num(basic.value) + num(bonus.value) - num(deduction.value);
+    total.value = t.toFixed(2);
+  }
+
+  if (empSelect) {
+    empSelect.addEventListener('change', () => {
+      const opt = empSelect.options[empSelect.selectedIndex];
+      if (!opt || !opt.value) return;
+      empId.value = opt.value;
+      name.value = opt.getAttribute('data-name') || '';
+    });
+  }
+
+  [basic, bonus, deduction].forEach(el => el && el.addEventListener('input', calc));
+  calc();
+
+  // Search
+  const search = document.getElementById("search");
+  const table = document.getElementById("table");
+  if (search && table && table.tBodies.length) {
+    search.addEventListener("input", function() {
+      const val = (this.value || '').toLowerCase();
+      const rows = table.tBodies[0].rows;
+      for (const r of rows) {
+        r.style.display = r.innerText.toLowerCase().includes(val) ? "" : "none";
+      }
+    });
+  }
+
+  function printSlip(empId, empName, basic, bonus, deduction, total, dt) {
+    const w = window.open("", "_blank");
+    w.document.write(`
+      <html><head><title>Payslip</title>
+      <style>
+        body{font-family:Inter,Arial; padding:24px;}
+        .card{border:1px solid #e2e8f0; border-radius:14px; padding:16px; max-width:520px;}
+        .h{font-weight:700; font-size:18px; margin-bottom:8px;}
+        .row{display:flex; justify-content:space-between; margin:6px 0;}
+        .muted{color:#64748b;}
+      </style></head><body>
+      <div class="card">
+        <div class="h">HRMS Payslip</div>
+        <div class="muted">Date: ${dt}</div>
+        <hr/>
+        <div class="row"><span class="muted">Emp ID</span><span>${empId}</span></div>
+        <div class="row"><span class="muted">Name</span><span>${empName}</span></div>
+        <div class="row"><span class="muted">Basic</span><span>₹${basic}</span></div>
+        <div class="row"><span class="muted">Bonus</span><span>₹${bonus}</span></div>
+        <div class="row"><span class="muted">Deduction</span><span>₹${deduction}</span></div>
+        <hr/>
+        <div class="row"><span class="muted">Total</span><span><b>₹${total}</b></span></div>
+      </div>
+      <script>window.print()</script>
+      </body></html>
+    `);
+    w.document.close();
+  }
+</script>
+{% endblock %}
